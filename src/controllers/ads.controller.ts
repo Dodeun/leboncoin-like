@@ -6,6 +6,7 @@ import {
     patchAd,
     deleteAdById,
 } from "../models/ads.model";
+import { Ad, NewAdInput } from "../types/ad.types";
 
 export const getAllAds = async (
     req: Request,
@@ -22,7 +23,7 @@ export const getAllAds = async (
 
 export const getAdById: RequestHandler<
     { id: string },
-    Response | { error: string }
+    Ad | { error: string }
 > = async (req, res, next) => {
     try {
         const parsedId: number = Number.parseInt(req.params.id);
@@ -31,7 +32,7 @@ export const getAdById: RequestHandler<
             return;
         }
 
-        const ad = await findAdById(parsedId);
+        const ad = await findAdById(parsedId) as Ad;
         if (!ad) {
             res.status(404).json({ error: "Can't find ad with this Id" });
         }
@@ -47,8 +48,9 @@ export const createAd: RequestHandler<{}, void, NewAdInput> = async (
     res,
     next
 ) => {
+    const {title, description, price, user_id, category_id} = req.body;
     try {
-        await insertAd();
+        await insertAd({title, description, price, user_id, category_id});
         res.sendStatus(201);
     } catch (err) {
         next(err);
@@ -58,21 +60,16 @@ export const createAd: RequestHandler<{}, void, NewAdInput> = async (
 export const updateAd: RequestHandler<
     { id: string },
     void | { error: string },
-    UpdateAdInput
+    Ad
 > = async (req, res, next) => {
     try {
+        const {ad_id, ...updateData} = req.body;
         const parsedId: number = Number.parseInt(req.params.id);
         if (isNaN(parsedId)) {
             res.status(400).json({ error: "Id is not a number" });
             return;
         }
-
-        const affectedRows = await patchAd(parsedId, req.body);
-        if (affectedRows === 0) {
-            res.status(404).json({ error: "Ad could not be find" });
-            return;
-        }
-
+        await patchAd(parsedId, updateData);
         res.sendStatus(204);
     } catch (err) {
         next(err);
@@ -81,7 +78,7 @@ export const updateAd: RequestHandler<
 
 export const delAdById: RequestHandler<
     { id: string },
-    number | { error: string }
+    void | { error: string }
 > = async (req, res, next) => {
     try {
         const parsedId: number = Number.parseInt(req.params.id);

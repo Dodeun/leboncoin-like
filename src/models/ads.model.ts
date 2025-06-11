@@ -1,5 +1,5 @@
-import { RowDataPacket } from "mysql2";
-import { Ad } from "../types/ad.types";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
+import { Ad, NewAdInput } from "../types/ad.types";
 import { db } from "./db";
 
 export const findAllAds = async (): Promise<Ad[]> => {
@@ -19,14 +19,51 @@ export const findAdById = async (id: number): Promise<Ad> => {
     return rows[0] as Ad;
 };
 
-export const insertAd = async (): Promise<void> => {
-    // TODO : requête d'insertion de l'ensemble des informations qui composent une annonce pour créer une nouvelle entrée en base
+export const insertAd = async ({
+    title,
+    description,
+    price,
+    user_id,
+    category_id,
+}: NewAdInput): Promise<void> => {
+    const fields = ["title", "description", "price", "user_id", "category_id"];
+    const values = [title, description, price, user_id, category_id];
+
+    const connectingElement = values.map(() => "?").join(",");
+    const sqlQuery = `
+        INSERT INTO ad (${fields.join(",")})
+        VALUES (${connectingElement});
+    `;
+
+    await db.query<ResultSetHeader>(sqlQuery, values);
 };
 
-export const patchAd = async (): Promise<void> => {
-    // TODO : avec l'id sélectionné, requête de modification des informations de l'annonce (mise à jour partielle)
+export const patchAd = async (
+    id: number,
+    updateData: Partial<Ad>
+): Promise<void> => {
+    const fields = Object.keys(updateData);
+    const values = Object.values(updateData);
+
+    if (fields.length === 0) {
+        return;
+    }
+
+    const connectingElement = fields.map((field) => `${field} = ?`).join(", ");
+    const sqlQuery = `
+        UPDATE ad
+        SET ${connectingElement}, updated_at = NOW()
+        WHERE ad_id = ?;
+    `;
+
+    await db.query<ResultSetHeader>(sqlQuery, [...values, id]);
 };
 
-export const deleteAdById = async (): Promise<void> => {
-    // TODO : requête de suppression de l'annonce, grâce à l'id sélectionné
+export const deleteAdById = async (id: number): Promise<number> => {
+    const [result] = await db.query<ResultSetHeader>(
+        "DELETE FROM ad WHERE ad_id = ?",
+        [id]
+    );
+
+    return result.affectedRows;
 };
