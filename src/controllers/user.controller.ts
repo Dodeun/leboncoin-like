@@ -55,7 +55,7 @@ export const createUser: RequestHandler<
             res.status(404).json({ error: "User could not be found" });
             return;
         }
-        res.status(200).json(newUser);
+        res.status(201).json(newUser);
     } catch (err) {
         next(err);
     }

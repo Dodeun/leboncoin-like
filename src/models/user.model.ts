@@ -19,7 +19,7 @@ export const findUserById = async (id: number): Promise<User> => {
         `
         SELECT *
         FROM user
-        WHERE email = ?;
+        WHERE id = ?;
         `,
         [id]
     );

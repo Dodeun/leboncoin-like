@@ -32,9 +32,10 @@ export const getAdById: RequestHandler<
             return;
         }
 
-        const ad = await findAdById(parsedId) as Ad;
+        const ad = (await findAdById(parsedId)) as Ad;
         if (!ad) {
             res.status(404).json({ error: "Can't find ad with this Id" });
+            return;
         }
 
         res.status(200).json(ad);
@@ -48,9 +49,9 @@ export const createAd: RequestHandler<{}, void, NewAdInput> = async (
     res,
     next
 ) => {
-    const {title, description, price, user_id, category_id} = req.body;
+    const { title, description, price, user_id, category_id } = req.body;
     try {
-        await insertAd({title, description, price, user_id, category_id});
+        await insertAd({ title, description, price, user_id, category_id });
         res.sendStatus(201);
     } catch (err) {
         next(err);
@@ -63,13 +64,17 @@ export const updateAd: RequestHandler<
     Ad
 > = async (req, res, next) => {
     try {
-        const {ad_id, ...updateData} = req.body;
+        const { ad_id, ...updateData } = req.body;
         const parsedId: number = Number.parseInt(req.params.id);
         if (isNaN(parsedId)) {
             res.status(400).json({ error: "Id is not a number" });
             return;
         }
-        await patchAd(parsedId, updateData);
+        const updatedRows = await patchAd(parsedId, updateData);
+        if (updatedRows === 0) {
+            res.status(404).json({ error: "Nothing updated" });
+            return;
+        }
         res.sendStatus(204);
     } catch (err) {
         next(err);
@@ -89,7 +94,7 @@ export const delAdById: RequestHandler<
 
         const deletedRows = await deleteAdById(parsedId);
         if (deletedRows === 0) {
-            res.status(404).json({ error: "Ad could not be find" });
+            res.status(404).json({ error: "Ad could not be found" });
             return;
         }
 

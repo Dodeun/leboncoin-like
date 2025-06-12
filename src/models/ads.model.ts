@@ -41,12 +41,12 @@ export const insertAd = async ({
 export const patchAd = async (
     id: number,
     updateData: Partial<Ad>
-): Promise<void> => {
+): Promise<void | number> => {
     const fields = Object.keys(updateData);
     const values = Object.values(updateData);
 
     if (fields.length === 0) {
-        return;
+        throw new Error("No fields provided for update");
     }
 
     const connectingElement = fields.map((field) => `${field} = ?`).join(", ");
@@ -56,7 +56,8 @@ export const patchAd = async (
         WHERE ad_id = ?;
     `;
 
-    await db.query<ResultSetHeader>(sqlQuery, [...values, id]);
+    const [result] = await db.query<ResultSetHeader>(sqlQuery, [...values, id]);
+    return result.affectedRows;
 };
 
 export const deleteAdById = async (id: number): Promise<number> => {
