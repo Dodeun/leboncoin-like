@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import testRouter from "./routes/test.route.js";
 import adRouter from "./routes/ad.route.js";
 import userRouter from "./routes/user.route.js";
+import authRouter from "./routes/auth.route.js";
 import cors from "cors";
 
 dotenv.config();
@@ -15,7 +16,8 @@ app.use(express.json());
 
 app.use("/api/test", testRouter);
 app.use("/api/ad", adRouter);
-app.use("/api/user,", userRouter);
+app.use("/api/user", userRouter);
+app.use("api/user", authRouter);
 
 // middleware d'erreur par lequel on passera quand on lèvera une erreur générique :
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {

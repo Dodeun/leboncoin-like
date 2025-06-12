@@ -25,24 +25,3 @@ export const findUserById = async (id: number): Promise<User> => {
     );
     return rows[0];
 };
-
-export const insertUser = async (
-    newUser: NewUserPayload
-): Promise<User | undefined> => {
-    const fields = Object.keys(newUser);
-    const values = Object.values(newUser);
-
-    if (fields.length === 0) {
-        return undefined;
-    }
-
-    const connectingElement = values.map(() => "?").join(", ");
-    const sqlQuery = `
-    INSERT INTO user (${fields.join(", ")}) VALUES (${connectingElement})`;
-
-    const [result] = await db.query<ResultSetHeader>(sqlQuery, values);
-
-    const user = await findUserById(result.insertId);
-
-    return user;
-};

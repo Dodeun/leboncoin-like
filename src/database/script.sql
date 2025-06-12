@@ -10,7 +10,7 @@ CREATE TABLE user (
 	email VARCHAR(100) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	city VARCHAR(100) NOT NULL,
-	phone_number INT
+	phone_number VARCHAR(100)
 );
 
 CREATE TABLE category (
