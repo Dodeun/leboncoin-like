@@ -17,7 +17,7 @@ export const findItemById = async (id: number): Promise<Item | null> => {
         [id]
     );
     const items = rows as Item[];
-    return items.length > 0 ? items[0] : null;
+    return items[0] || null;
 };
 
 export const insertItem = async (data: ItemPayload): Promise<Item | null> => {

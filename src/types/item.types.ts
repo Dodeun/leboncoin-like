@@ -10,7 +10,7 @@ export type Item = {
     category_id: number;
 };
 
-//FRONT TO BACK
+// FRONT TO BACK
 export type ItemPayload = {
     titre: string;
     description: string;

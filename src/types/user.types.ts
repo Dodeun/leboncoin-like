@@ -1,29 +1,22 @@
-export interface NewUserPayload {
+// BACK TO FRONT
+export type User = {
+    id: number;
+    email: string;
     name: string;
+    city: string;
+    phone?: string;
+    created_at: Date;
+};
+
+export type UserWithPassword = User & {
+    password: string;
+};
+
+// FRONT TO BACK
+export type NewUserPayload = {
     email: string;
     password: string;
-    city: string;
-    phone_number?: string;
-}
-
-export interface NewUser {
     name: string;
-    email: string;
-    hashedPassword: string;
     city: string;
-    phone_number?: string;
-}
-
-export interface User {
-    user_id: number;
-    name: string;
-    email: string;
-    hashedPassword: string;
-    city: string;
-    phone_number?: string;
-}
-
-export interface UserLoginPayload {
-    email: string;
-    password: string;
-}
+    phone?: string;
+};

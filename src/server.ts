@@ -2,7 +2,6 @@ import express, { Request, Response, NextFunction, Application } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import dotenv from "dotenv";
-import testRouter from "./routes/test.route.js";
 import itemRouter from "./routes/item.route.js";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
