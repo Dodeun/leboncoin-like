@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.get("/", getAllItems);
 router.get("/:id", getItemById);
-router.post("/", createItem);
-router.patch("/:id", patchItemById);
-router.delete("/:id", supprItemById);
+router.post("/", authMiddleware, createItem);
+router.patch("/:id", authMiddleware, patchItemById);
+router.delete("/:id", authMiddleware, supprItemById);
 
 export default router;

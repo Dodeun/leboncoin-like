@@ -13,7 +13,7 @@ export type UserWithPassword = User & {
 };
 
 // FRONT TO BACK
-export type NewUserPayload = {
+export type UserPayload = {
     email: string;
     password: string;
     name: string;
